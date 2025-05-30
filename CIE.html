@@ -67,7 +67,18 @@
           Download CSV
         </button>
       </div>
+      <div id="controls" class="flex flex-wrap gap-4 mb-4 items-center">
+        <label for="subjectSelect" class="font-semibold">Subject Code:</label>
+        <select id="subjectSelect" class="border rounded px-2 py-1"></select>
 
+        <label class="ml-4 font-semibold">Grades:</label>
+        <label><input type="checkbox" class="gradeToggle" value="a*" checked> A*</label>
+        <label><input type="checkbox" class="gradeToggle" value="a" checked> A</label>
+        <label><input type="checkbox" class="gradeToggle" value="b" checked> B</label>
+        <label><input type="checkbox" class="gradeToggle" value="c" checked> C</label>
+        <label><input type="checkbox" class="gradeToggle" value="d" checked> D</label>
+        <label><input type="checkbox" class="gradeToggle" value="e" checked> E</label>
+      </div>
       <canvas id="CIEChart" width="800" height="400" class="mt-8"></canvas>
 
     </section>
