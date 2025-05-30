@@ -146,11 +146,11 @@
           $('#CIETable').DataTable();
           const datasets = {};
           const allLabels = new Set();
-                
-          parsed.forEach(row => {
-            const subject = row['code'];
-            const time = `${row['year']} ${row['session']}`;
-            const grade = parseFloat(row['a']) || 0; // Use 'a*', 'a', or 'b' as needed
+
+          parsed.forEach(row => { //SubjectCode,Subject,Series,Component,MaxRawMark,A,B,C,D,E
+            const subject = row['SubjectCode'];
+            const time = row['Series'];
+            const grade = parseFloat(row['A']) || 0; // Use 'a*', 'a', or 'b' as needed
           
             allLabels.add(time);
           
