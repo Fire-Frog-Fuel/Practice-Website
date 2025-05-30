@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact information</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com" defer></script>
+
+  <!-- DataTables CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+  >
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #def2f1, #ffffff);
+    }
+    header {
+      background-color: #3aafa9;
+    }
+    table.dataTable thead th {
+      background-color: #3aafa9;
+      color: white;
+    }
+    table.dataTable tbody tr:hover {
+      background-color: #dff6f5;
+    }
+  </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+  <header class="bg-[#3aafa9] text-white text-center py-6 shadow-lg">
+    <h1 class="text-4xl font-bold">Contact information</h1>
+    <nav class="mt-4">
+      <a href="index.html" class="mx-4 text-lg hover:text-white transition">Home</a>
+      <a href="Edexcel.html" class="mx-4 text-lg hover:text-white transition">Edexcel</a>
+      <a href="OxfordAqa.html" class="mx-4 text-lg hover:text-white transition">Oxford AQA</a>
+      <a href="CIE.html" class="mx-4 text-lg hover:text-white transition">CIE</a>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-6xl mx-auto p-6">
+    <section class="bg-white rounded-lg shadow-md p-6">
+      <p class="mb-2">For issues or inquiries, please reach out via:</p>
+      <ul class="list-disc list-inside">
+        <li>Issues with website: <a href="https://github.com/fire-frog-fuel" class="text-blue-600 underline">fire-frog-fuel</a></li>
+        <li>Issues with database: <a href="https://github.com/ChessMastermind" class="text-blue-600 underline">ChessMastermind</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="bg-[#3aafa9] text-white text-center py-4 mt-10">
+    <p>
+      Database provided by
+      <a
+        href="https://github.com/ChessMastermind"
+        class="underline hover:text-gray-200"
+      >
+        ChessMastermind
+      </a>
+    </p>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+  <script
+    src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"
+    defer
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"
+    defer
+  ></script>
+
+  <!-- Your page logic -->
+ 
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade Boundaries A Levels</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #def2f1, #ffffff);
+    }
+    header {
+      background-color: #3aafa9;
+    }
+    nav a:hover {
+      color: #ffffff;
+      border-bottom: 2px solid #feffff;
+    }
+  </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+  <header class="text-white text-center py-6 shadow-lg">
+    <h1 class="text-4xl font-bold">Grade Boundaries</h1>
+    <nav class="mt-4">
+      <a href="Edexcel.html" class="mx-4 text-lg hover:text-white transition">Edexcel</a>
+      <a href="CIE.html" class="mx-4 text-lg hover:text-white transition">CIE</a>
+      <a href="OxfordAqa.html" class="mx-4 text-lg hover:text-white transition">Oxford AQA</a>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-6xl mx-auto p-6">
+    <section class="mb-10">
+  <h2 class="text-3xl font-semibold mb-4">Welcome</h2>
+  <p class="text-lg mb-2">
+    This website is a free and open-access platform for analyzing and comparing A-Level grade boundaries from Edexcel, CIE, and Oxford AQA.
+    It presents all available data in interactive tables, downloadable formats, and animated visualizations to help students, teachers, and researchers.
+  </p>
+  <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <h3 class="text-xl font-bold mb-2">Edexcel</h3>
+      <p class="text-sm">Covers over 800 units from 2015 to 2025. Includes Maths, Sciences, Economics and more.</p>
+      <a href="Edexcel.html" class="inline-block mt-4 px-4 py-2 bg-[#3aafa9] text-white rounded hover:bg-[#2b7a78]">View Edexcel</a>
+    </div>
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <h3 class="text-xl font-bold mb-2">CIE</h3>
+      <p class="text-sm">Covers 2021 to 2025. Explore grade thresholds for AS/A-Level Cambridge International exams.</p>
+      <a href="CIE.html" class="inline-block mt-4 px-4 py-2 bg-[#3aafa9] text-white rounded hover:bg-[#2b7a78]">View CIE</a>
+    </div>
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <h3 class="text-xl font-bold mb-2">Oxford AQA</h3>
+      <p class="text-sm">Oxford AQA subjects from 2020 to 2025. A growing dataset with verified grade data.</p>
+      <a href="OxfordAqa.html" class="inline-block mt-4 px-4 py-2 bg-[#3aafa9] text-white rounded hover:bg-[#2b7a78]">View Oxford AQA</a>
+    </div>
+  </div>
+</section>
+
+    
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Have Suggestions?</h2>
+      <form class="bg-white p-6 rounded shadow">
+        <label class="block mb-2 font-medium" for="suggestion">We welcome your ideas and feedback:</label>
+        <textarea id="suggestion" rows="4" class="w-full p-3 border rounded mb-4" placeholder="Write your suggestion here..."></textarea>
+        <button type="submit" class="bg-[#3aafa9] text-white px-4 py-2 rounded hover:bg-[#2b7a78]">Submit</button>
+      </form>
+    </section>
+
+    
+  </main>
+
+  <footer class="bg-[#3aafa9] text-white text-center py-4">
+    <p>&copy; 2025 Grade Boundaries provided by <a href="https://github.com/ChessMastermind" class="underline hover:text-gray-200">ChessMastermind</a></p>
+    <p><a href="contact_information.html" class="underline hover:text-gray-200">Contact us</a></p>
+  </footer>
+
+  
+</body>
+</html>

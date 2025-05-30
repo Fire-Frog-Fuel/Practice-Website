@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CIE Grade Boundaries</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com" defer></script>
+
+  <!-- DataTables CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+  >
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #def2f1, #ffffff);
+    }
+    header {
+      background-color: #3aafa9;
+    }
+    table.dataTable thead th {
+      background-color: #3aafa9;
+      color: white;
+    }
+    table.dataTable tbody tr:hover {
+      background-color: #dff6f5;
+    }
+  </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+  <header class="bg-[#3aafa9] text-white text-center py-6 shadow-lg">
+    <h1 class="text-4xl font-bold">Cambridge International Grade Boundaries</h1>
+    <nav class="mt-4">
+      <a href="index.html" class="mx-4 text-lg hover:text-white transition">Home</a>
+      <a href="Edexcel.html" class="mx-4 text-lg hover:text-white transition">Edexcel</a>
+      <a href="OxfordAqa.html" class="mx-4 text-lg hover:text-white transition">Oxford AQA</a>
+    </nav>
+  </header>
+
+  <main class="flex-1 max-w-6xl mx-auto p-6">
+    <section class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-2xl font-semibold mb-4">Cambridge International Grade Boundaries </h2>
+
+      <table
+        id="CIETable"
+        class="display w-full"
+        aria-describedby="grade-boundaries-caption"
+      >
+        <caption id="grade-boundaries-caption" class="sr-only">
+          Cambridge grade boundaries per unit code
+        </caption>
+        <thead><tr id="CIE-head"></tr></thead>
+        <tbody id="CIE-body"></tbody>
+      </table>
+
+      <div class="text-right mt-4">
+        <button
+          id="downloadCSV"
+          class="bg-[#3aafa9] text-white px-4 py-2 rounded hover:bg-[#2b7a78] transition"
+        >
+          Download CSV
+        </button>
+      </div>
+
+      <canvas id="CIEChart" width="800" height="400" class="mt-8"></canvas>
+
+    </section>
+  </main>
+
+  <footer class="bg-[#3aafa9] text-white text-center py-4 mt-10">
+    <p>
+      Database provided by
+      <a
+        href="https://github.com/ChessMastermind"
+        class="underline hover:text-gray-200"
+      >
+        ChessMastermind
+      </a>
+    </p>
+  </footer>
+
+  <!-- Dependencies (deferred) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+  <script
+    src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"
+    defer
+  ></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"
+    defer
+  ></script>
+
+  <!-- Your page logic -->
+  <script defer>
+    window.addEventListener('DOMContentLoaded', () => {
+      fetch('CIE.csv')
+        .then(resp => {
+          if (!resp.ok) throw new Error('Network error');
+          return resp.text();
+        })
+        .then(csv => {
+          const parsed = Papa.parse(csv, {
+            header: true,
+            skipEmptyLines: true
+          }).data;
+
+          const headRow = document.getElementById('CIE-head');
+          const body    = document.getElementById('CIE-body');
+
+          function populateTable(data) {
+            headRow.innerHTML = '';
+            body.innerHTML    = '';
+
+            if (!data.length) return;
+
+            // build the header
+            const headers = Object.keys(data[0]);
+            headers.forEach(h => {
+              const th = document.createElement('th');
+              th.textContent = h;
+              headRow.appendChild(th);
+            });
+
+            // build the rows
+            data.forEach(row => {
+              const tr = document.createElement('tr');
+              headers.forEach(h => {
+                const td = document.createElement('td');
+                td.textContent = row[h];
+                tr.appendChild(td);
+              });
+              body.appendChild(tr);
+            });
+          }
+
+          // initial render
+          populateTable(parsed);
+
+          // initialize DataTable once
+          $('#CIETable').DataTable();
+          const datasets = {};
+          const allLabels = new Set();
+                
+          parsed.forEach(row => {
+            const subject = row['code'];
+            const time = `${row['year']} ${row['session']}`;
+            const grade = parseFloat(row['a']) || 0; // Use 'a*', 'a', or 'b' as needed
+          
+            allLabels.add(time);
+          
+            if (!datasets[subject]) {
+              datasets[subject] = {
+                label: subject,
+                data: {},
+                fill: false,
+                borderWidth: 2
+              };
+            }
+          
+            datasets[subject].data[time] = grade;
+          });
+        
+          const sortedLabels = Array.from(allLabels).sort((a, b) => {
+            // sort by year + month
+            const order = { Jan: 1, Feb: 2, Mar: 3, May: 5, Jun: 6, Jul: 7, Aug: 8, Oct: 10, Nov: 11, Dec: 12 };
+            const [ay, am] = a.split(' ');
+            const [by, bm] = b.split(' ');
+            return ay - by || order[am] - order[bm];
+          });
+        
+          const chartData = {
+            labels: sortedLabels,
+            datasets: Object.values(datasets).map(ds => {
+              return {
+                label: ds.label,
+                data: sortedLabels.map(l => ds.data[l] ?? null),
+                fill: false,
+                borderColor: `hsl(${Math.random() * 360}, 70%, 50%)`
+              };
+            })
+          };
+        
+          const ctx = document.getElementById('CIEChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'line',
+            data: chartData,
+            options: {
+              responsive: true,
+              interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+              },
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Grade A Boundary Over Time per Subject'
+                },
+                legend: {
+                  display: true,
+                  position: 'bottom'
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  title: {
+                    display: true,
+                    text: 'Marks'
+                  }
+                },
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Exam Session'
+                  }
+                }
+              }
+            }
+          });
+          
+          
+          // wire up download button
+          document
+            .getElementById('downloadCSV')
+            .addEventListener('click', () => {
+              const blob = new Blob([csv], { type: 'text/csv' });
+              const url  = URL.createObjectURL(blob);
+              const a    = document.createElement('a');
+              a.href     = url;
+              a.download = 'CIE_Grade_Boundaries.csv';
+              a.click();
+            });
+        })
+        .catch(err => {
+          console.error(err);
+          const body = document.getElementById('CIE-body');
+          body.innerHTML = `
+            <tr>
+              <td colspan="10" class="text-center py-4">
+                Failed to load data.
+              </td>
+            </tr>
+          `;
+        });
+    });
+  </script>
+</body>
+</html>
