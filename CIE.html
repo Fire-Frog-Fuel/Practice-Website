@@ -155,86 +155,111 @@
 
           // initialize DataTable once
           $('#CIETable').DataTable();
-          const datasets = {};
-          const allLabels = new Set();
+          const allSessions = [];
+const bySubject = {};
+const grades = ['a*', 'a', 'b', 'c', 'd', 'e'];
 
-          parsed.forEach(row => { //SubjectCode,Subject,Series,Component,MaxRawMark,A,B,C,D,E
-            const subject = row['SubjectCode'];
-            const time = row['Series'];
-            const grade = parseFloat(row['A']) || 0; // Use 'a*', 'a', or 'b' as needed
+// Group entries by subject and session
+parsed.forEach(row => {
+  const session = row['Series'] || row['session'];
+  const code = row['SubjectCode'] || row['code'];
+  if (!session || !code) return;
+
+  if (!bySubject[code]) bySubject[code] = {};
+  if (!bySubject[code][session]) bySubject[code][session] = {};
+
+  grades.forEach(g => {
+    const val = parseFloat(row[g.toUpperCase()] || row[g]);
+    if (!isNaN(val)) {
+      bySubject[code][session][g] = val;
+    }
+  });
+
+  if (!allSessions.includes(session)) allSessions.push(session);
+});
+
+// Sort sessions
+const sortedSessions = allSessions.sort((a, b) => {
+  const [ma, ya] = a.split('-');
+  const [mb, yb] = b.split('-');
+  const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  return ya - yb || months.indexOf(ma.toLowerCase()) - months.indexOf(mb.toLowerCase());
+});
+
+// Populate subject dropdown
+const subjectSelect = document.getElementById('subjectSelect');
+Object.keys(bySubject).sort().forEach(code => {
+  const opt = document.createElement('option');
+  opt.value = code;
+  opt.textContent = code;
+  subjectSelect.appendChild(opt);
+});
+
+// Chart setup
+const ctx = document.getElementById('CIEChart').getContext('2d');
+let chart = null;
+
+function updateChart() {
+  const selectedCode = subjectSelect.value;
+  const activeGrades = Array.from(document.querySelectorAll('.gradeToggle:checked')).map(cb => cb.value);
+  const subjectData = bySubject[selectedCode];
+
+  const datasets = activeGrades.map(g => {
+    return {
+      label: g.toUpperCase(),
+      data: sortedSessions.map(s => subjectData?.[s]?.[g] ?? null),
+      borderColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
+      tension: 0.2,
+      fill: false
+    };
+  });
+
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: sortedSessions,
+      datasets: datasets
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: `Grade Boundaries Over Time — ${selectedCode}`
+        },
+        legend: {
+          position: 'bottom'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Marks'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Exam Session'
+          }
+        }
+      }
+    }
+  });
+}
+
+// Attach listeners
+subjectSelect.addEventListener('change', updateChart);
+document.querySelectorAll('.gradeToggle').forEach(cb => cb.addEventListener('change', updateChart));
+
+// Initial trigger
+subjectSelect.value = subjectSelect.options[0]?.value || '';
+updateChart();
+
           
-            allLabels.add(time);
-          
-            if (!datasets[subject]) {
-              datasets[subject] = {
-                label: subject,
-                data: {},
-                fill: false,
-                borderWidth: 2
-              };
-            }
-          
-            datasets[subject].data[time] = grade;
-          });
-        
-          const sortedLabels = Array.from(allLabels).sort((a, b) => {
-            // sort by year + month
-            const order = { Jan: 1, Feb: 2, Mar: 3, May: 5, Jun: 6, Jul: 7, Aug: 8, Oct: 10, Nov: 11, Dec: 12 };
-            const [ay, am] = a.split(' ');
-            const [by, bm] = b.split(' ');
-            return ay - by || order[am] - order[bm];
-          });
-        
-          const chartData = {
-            labels: sortedLabels,
-            datasets: Object.values(datasets).map(ds => {
-              return {
-                label: ds.label,
-                data: sortedLabels.map(l => ds.data[l] ?? null),
-                fill: false,
-                borderColor: `hsl(${Math.random() * 360}, 70%, 50%)`
-              };
-            })
-          };
-        
-          const ctx = document.getElementById('CIEChart').getContext('2d');
-          new Chart(ctx, {
-            type: 'line',
-            data: chartData,
-            options: {
-              responsive: true,
-              interaction: {
-                mode: 'nearest',
-                axis: 'x',
-                intersect: false
-              },
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Grade A Boundary Over Time per Subject'
-                },
-                legend: {
-                  display: true,
-                  position: 'bottom'
-                }
-              },
-              scales: {
-                y: {
-                  beginAtZero: true,
-                  title: {
-                    display: true,
-                    text: 'Marks'
-                  }
-                },
-                x: {
-                  title: {
-                    display: true,
-                    text: 'Exam Session'
-                  }
-                }
-              }
-            }
-          });
           
           
           // wire up download button
